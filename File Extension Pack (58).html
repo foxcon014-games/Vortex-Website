@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Links</title>
+    <style>
+        /* Reusing the notes app color scheme and font */
+        body {
+            background: black;
+            color: red;
+            font-family: Consolas, monospace;
+            margin: 0;
+            padding: 20px;
+            /* Allow scrolling when content overflows */
+            overflow-y: auto; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: red;
+            font-size: 24px;
+            margin-bottom: 25px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #linksContainer {
+            width: 100%;
+            max-width: 600px; /* Center content nicely */
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Space between link entries */
+        }
+
+        /* Styling for each individual link entry */
+        .link-entry {
+            display: flex;
+            justify-content: space-between; /* Pushes copy button to the right */
+            align-items: center;
+            background: #1e1e1e;
+            border: 1px solid maroon;
+            border-radius: 6px;
+            padding: 10px;
+            /* Center text inside the entry box */
+            text-align: center; 
+        }
+
+        /* Styling the Link Button itself (the <a> tag) */
+        .link-btn {
+            /* This makes the link take up available space */
+            flex-grow: 1; 
+            background: #444; 
+            border: none;
+            color: red;
+            padding: 12px;
+            text-decoration: none; /* Remove default link underline */
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            /* Center the text within the button space */
+            display: block; 
+            margin-right: 10px; /* Space between link button and copy button */
+            
+        }
+
+      
+
+        /* Styling the Copy Button */
+        .copy-btn {
+            background: #444;
+            color: red;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: Consolas, monospace;
+        }
+
+        
+    </style>
+</head>
+
+<body>
+ 
+  <h1 style="font-family:cursive; font-size:35px; text-align:center;">Links</h1>
+
+<div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://vortexos.net.cdn.cloudflare.net"
+        onclick="openLink('https://vortexos.net.cdn.cloudflare.net')">VortexOS</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div><div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://pre-algebra.texasmath.net"
+        onclick="openLink('https://pre-algebra.texasmath.net')">Pre-Algebra</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+      
+      
+      <div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://toytheater.com"
+        onclick="openLink('https://toytheater.com')">Toy Theater</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+      </div><div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://www.mathnook.com/fungames/funstuff.html"
+        onclick="openLink('https://www.mathnook.com/fungames/funstuff.html')">Math Nook</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+      
+     </div><div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://wocket-weague.vercel.app"
+        onclick="openLink('https://wocket-weague.vercel.app')">Wocket Weague</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+
+    </div><div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://transcript.lol/tools"
+        onclick="openLink('https://transcript.lol/tools')">Transcript</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+
+    </div><div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://postsyncer.com/tools"
+        onclick="openLink('https://postsyncer.com/tools')">Poster Syncer</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+      
+<div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://mcskins.top"
+        onclick="openLink('https://mcskins.top')">Minecraft Skins</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+<div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://truffled.lol"
+        onclick="openLink('https://truffled.lol')">Truffled</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+<div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://gn-math.dev"
+        onclick="openLink('https://gn-math.dev')">GN Math</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+      <div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://ticktacktoe-7aa6d.web.app"
+        onclick="openLink('https://ticktacktoe-7aa6d.web.app')">Tic Tac Toe</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+      
+      
+      <div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://tmnlabs.com/static/games/random-internet-games"
+        onclick="openLink('https://tmnlabs.com/static/games/random-internet-games')">Random Internet Games</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+      
+      
+      
+      <div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://phet.colorado.edu/sims/html"
+        onclick="openLink('https://phet.colorado.edu/sims/html')">Simulator Labs</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+      
+      
+      
+      <div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://activitysforscience.space"
+        onclick="openLink('https://activitysforscience.space')">AfiliteOS</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div><div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://unblocked-games.s3.amazonaws.com/games/rebel-forces/unblocked.html"
+        onclick="openLink('https://unblocked-games.s3.amazonaws.com/games/rebel-forces/unblocked.html')">Rebel Forces</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+      <div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://playluma.org"
+        onclick="openLink('https://playluma.org')">Play Luma</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+
+
+<div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://heartiveloves.pages.dev"
+        onclick="openLink('https://heartiveloves.pages.dev')">Heartive</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+
+
+
+
+
+
+
+
+
+<div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://www.instantsoundboard.com"
+        onclick="openLink('https://www.instantsoundboard.com')">Pre-Algebra</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+
+
+
+
+
+
+
+
+
+  
+
+        
+
+<div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://smartchoice.bostoncareercounselor.com"
+        onclick="openLink('https://smartchoice.bostoncareercounselor.com')">v5-stable-5.0.41</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+  <div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://poem.sghub.co.za"
+        onclick="openLink('https://poem.sghub.co.za')">v5-stable-5.0.41</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+    <div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://subscribevcsa.greenfieldhk.org/"
+        onclick="openLink('https://subscribevcsa.greenfieldhk.org/')">v5-stable-5.0.41</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+      <div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://light.pro-house.cl"
+        onclick="openLink('https://light.pro-house.cl')">v5-stable-5.0.41</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+        <div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://privacy.nordbrandt.se"
+        onclick="openLink('https://privacy.nordbrandt.se')">v5-stable-5.0.41</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+          <div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://learning.nordbrandt.se"
+        onclick="openLink('https://learning.nordbrandt.se')">v5-stable-5.0.41</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+            <div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://blog.artweb.website.cdn.cloudflare.net"
+        onclick="openLink('https://blog.artweb.website.cdn.cloudflare.net')">DayDream X</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+  <div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://dreaming.is-not.cool"
+        onclick="openLink('https://dreaming.is-not.cool')">DayDream X</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+    <div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://daydreaming.env.pm"
+        onclick="openLink('https://daydreaming.env.pm')">DayDream X</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+   <div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://spaceiscool.is-not.cool"
+        onclick="openLink('https://spaceiscool.is-not.cool')">Space</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+        <div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://edtech.sghub.co.za"
+        onclick="openLink('https://edtech.sghub.co.za')">Space</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+             <div id="linksContainer">
+    
+    <div class="link-entry">
+      
+     <button class="link-btn"
+        data-url="https://outerspace.env.pm"
+        onclick="openLink('https://outerspace.env.pm')">Space</button>
+
+
+      <button class="copy-btn" onclick="copyLink(this)">Copy</button>
+    </div>
+
+  </div>
+<style>
+/* Text shadow for all text elements */
+body, h1, h2, h3, h4, h5, h6, p, span, div, a, label, button, input, textarea, select, option {
+    text-shadow: 0 0 4px currentColor, 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor;
+}
+
+/* Softer glow for placeholders */
+::placeholder {
+    text-shadow: 0 0 3px currentColor, 0 0 8px currentColor;
+    opacity: 0.75;
+}
+
+/* Prevent glow on hidden elements */
+[style*="display: none"], [style*="visibility: hidden"] {
+    text-shadow: none !important;
+}
+
+/* Base transition for buttons */
+.link-btn, .copy-btn {
+    transition: all 0.9s ease;
+}
+
+/* Hover effect for buttons */
+.link-btn:hover, .copy-btn:hover {
+    background: #222222;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.12) inset, 0 0 30px rgba(255,255,255,0.25);
+    transition: all 0.7s ease;
+}
+</style>
+<script>
+function openLink(url) {
+    window.location.href = url; // No preview on hover
+}
+</script>
+
+<!-- JS: COPY BUTTON -->
+<script>
+function copyLink(buttonElement) {
+    const linkBtn = buttonElement.previousElementSibling;
+    const urlToCopy = linkBtn.getAttribute('data-url');
+
+    navigator.clipboard.writeText(urlToCopy).then(() => {
+        buttonElement.textContent = "Copied!";
+        setTimeout(() => {
+            buttonElement.textContent = "Copy";
+        }, 1500);
+    });
+}
+</script>
+
+
+
+
+
+<script>
+
+(function() {
+    'use strict';
+
+    // ───────────────────────────────────────────────────────────────────
+    // 1. PAGE DETECTION (only for default color fallback)
+    // ───────────────────────────────────────────────────────────────────
+    const pageTitle = document.title.toLowerCase();
+    const isAdminFallback = pageTitle.includes('admin');
+    const defaultMouseColor = isAdminFallback ? 'rainbow' : 'red';
+    
+    console.log(`[Unified Mouse V2] Detected: ${isAdminFallback ? 'ADMIN' : 'REGULAR'} mode (fallback)`);
+
+    // ───────────────────────────────────────────────────────────────────
+    // 2. GLOBAL VARIABLES
+    // ───────────────────────────────────────────────────────────────────
+    let mouseActive = false;
+    let rainbow = false;
+    let currentColor = defaultMouseColor;
+    let cursorElement = null;
+    let isMouseInsideBounds = false;  // hidden until mouse enters
+    let storagePrefix = 'vortex';     // default to regular
+
+    // ───────────────────────────────────────────────────────────────────
+    // 3. DETERMINE STORAGE PREFIX based on 'vortexMode'
+    // ───────────────────────────────────────────────────────────────────
+    function getStoragePrefix() {
+        const mode = localStorage.getItem('vortexMode');
+        return (mode === 'admin') ? 'vortexadmin' : 'vortex';
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 4. CREATE CURSOR ELEMENT (with Vortex Admin rainbow-ready gradient)
+    // ───────────────────────────────────────────────────────────────────
+    function createCursorElement() {
+        cursorElement = document.getElementById('__rbCursor');
+        
+        if (!cursorElement) {
+            cursorElement = document.createElement('div');
+            cursorElement.id = '__rbCursor';
+            cursorElement.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 32px;
+                height: 32px;
+                pointer-events: none;
+                z-index: 2147483647;
+                transform: translate(-4px, -4px);
+                display: none;
+            `;
+            
+            cursorElement.innerHTML = `
+                <svg viewBox="0 0 32 32" width="100%" height="100%">
+                    <defs>
+                        <linearGradient id="rbGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%"   stop-color="#ff0000" />
+                            <stop offset="20%"  stop-color="#ff0000" />
+                            <stop offset="40%"  stop-color="#ff0000" />
+                            <stop offset="60%"  stop-color="#ff0000" />
+                            <stop offset="80%"  stop-color="#ff0000" />
+                            <stop offset="100%" stop-color="#ff0000" />
+                        </linearGradient>
+                    </defs>
+                    <polygon points="0,0 0,28 8,20 14,30 18,28 12,18 20,18" fill="url(#rbGradient)" />
+                </svg>
+            `;
+            
+            document.body.appendChild(cursorElement);
+        }
+        
+        return cursorElement;
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 5. APPLY COLOR (Vortex Admin style rainbow via stop animation)
+    // ───────────────────────────────────────────────────────────────────
+    function applyMouseColor(color) {
+        if (!cursorElement) return;
+        
+        const polygon = cursorElement.querySelector('polygon');
+        const svg     = cursorElement.querySelector('svg');
+        const stops   = cursorElement.querySelectorAll('stop');
+        
+        if (!polygon || !stops.length) return;
+
+        if (color === 'rainbow') {
+            rainbow = true;
+            polygon.setAttribute('fill', 'url(#rbGradient)');
+            stops.forEach(stop => {
+                stop.style.animation = 'rainbowShift 3s linear infinite';
+            });
+            cursorElement.classList.add('rainbow-glow');
+            if (svg) svg.style.filter = '';
+        } else {
+            rainbow = false;
+            polygon.setAttribute('fill', color);
+            stops.forEach(stop => {
+                stop.style.animation = 'none';
+                stop.style.stopColor = color;  // fallback solid
+            });
+            cursorElement.classList.remove('rainbow-glow');
+            if (svg) svg.style.filter = `drop-shadow(0 0 4px ${color}) drop-shadow(0 0 10px ${color}) drop-shadow(0 0 20px ${color})`;
+        }
+        
+        currentColor = color;
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 6. ACTIVATE / DEACTIVATE
+    // ───────────────────────────────────────────────────────────────────
+    function activateMouse() {
+        if (!cursorElement) createCursorElement();
+        
+        if (isMouseInsideBounds) {
+            cursorElement.style.display = 'block';
+        }
+        mouseActive = true;
+        
+        const savedColor = localStorage.getItem(`${storagePrefix}MouseColor`) || defaultMouseColor;
+        applyMouseColor(savedColor);
+        
+        localStorage.setItem(`${storagePrefix}MouseEnabled`, 'true');
+    }
+
+    function deactivateMouse() {
+        if (cursorElement) {
+            cursorElement.style.display = 'none';
+        }
+        mouseActive = false;
+        localStorage.setItem(`${storagePrefix}MouseEnabled`, 'false');
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 7. REFRESH FROM LATEST LOCALSTORAGE
+    // ───────────────────────────────────────────────────────────────────
+    function refreshFromLocalStorage() {
+        storagePrefix = getStoragePrefix();  // Re-check mode each time
+        
+        const enabledStr = localStorage.getItem(`${storagePrefix}MouseEnabled`);
+        const color = localStorage.getItem(`${storagePrefix}MouseColor`) || defaultMouseColor;
+
+        const shouldBeActive = enabledStr === 'true';
+
+        if (shouldBeActive !== mouseActive) {
+            if (shouldBeActive) {
+                activateMouse();
+            } else {
+                deactivateMouse();
+            }
+        } else if (shouldBeActive) {
+            applyMouseColor(color);
+        }
+
+        if (cursorElement) {
+            cursorElement.style.display = (mouseActive && isMouseInsideBounds) ? 'block' : 'none';
+        }
+        
+        console.log(`[Unified Mouse V2] Using prefix: ${storagePrefix} (mode: ${localStorage.getItem('vortexMode') || 'regular'})`);
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 8. MOUSE TRACKING + BOUNDARY DETECTION
+    // ───────────────────────────────────────────────────────────────────
+    function updateCursorPosition(e) {
+        if (!mouseActive || !cursorElement) return;
+        
+        const x = e.clientX;
+        const y = e.clientY;
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        
+        const buffer = 5;
+        const inside = (
+            x >= -buffer && x <= w + buffer &&
+            y >= -buffer && y <= h + buffer
+        );
+        
+        if (inside) {
+            if (!isMouseInsideBounds) {
+                isMouseInsideBounds = true;
+                refreshFromLocalStorage();
+                if (mouseActive) cursorElement.style.display = 'block';
+            }
+            cursorElement.style.left = x + 'px';
+            cursorElement.style.top = y + 'px';
+        } else {
+            if (isMouseInsideBounds) {
+                isMouseInsideBounds = false;
+                refreshFromLocalStorage();
+                cursorElement.style.display = 'none';
+            }
+        }
+    }
+
+    function handleMouseLeave() {
+        if (cursorElement) {
+            isMouseInsideBounds = false;
+            refreshFromLocalStorage();
+            cursorElement.style.display = 'none';
+        }
+    }
+
+    function handleMouseEnter() {
+        if (cursorElement) {
+            isMouseInsideBounds = true;
+            refreshFromLocalStorage();
+            if (mouseActive) cursorElement.style.display = 'block';
+        }
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 9. EVENT LISTENERS
+    // ───────────────────────────────────────────────────────────────────
+    function attachMouseListeners() {
+        document.addEventListener('mousemove', updateCursorPosition);
+        document.addEventListener('mouseleave', handleMouseLeave);
+        document.addEventListener('mouseenter', handleMouseEnter);
+        
+        window.addEventListener('mouseout', e => {
+            if (!e.relatedTarget && !e.toElement) handleMouseLeave();
+        });
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 10. LIVE SYNC FROM OTHER TABS
+    // ───────────────────────────────────────────────────────────────────
+    window.addEventListener('storage', e => {
+        if (e.key.startsWith('vortex') && (e.key.includes('MouseEnabled') || e.key.includes('MouseColor') || e.key === 'vortexMode')) {
+            refreshFromLocalStorage();
+        }
+    });
+
+    // ───────────────────────────────────────────────────────────────────
+    // 11. INITIAL LOAD
+    // ───────────────────────────────────────────────────────────────────
+    function loadSavedMousePreferences() {
+        refreshFromLocalStorage();
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 12. INITIALIZE – add EXACT Vortex Admin rainbow keyframes
+    // ───────────────────────────────────────────────────────────────────
+    function initialize() {
+        if (!document.getElementById('unifiedMouseStyles')) {
+            const style = document.createElement('style');
+            style.id = 'unifiedMouseStyles';
+            style.textContent = `
+                @keyframes rainbowShift {
+                    0%   { stop-color: red;    }
+                    20%  { stop-color: orange; }
+                    40%  { stop-color: yellow; }
+                    60%  { stop-color: green;  }
+                    80%  { stop-color: blue;   }
+                    100% { stop-color: violet; }
+                }
+
+                * {
+                    cursor: none !important;
+                }
+
+                /* Vortex Admin exact selector for rainbow */
+                #__rbCursor stop {
+                    animation: rainbowShift 3s linear infinite;
+                }
+
+                @keyframes rainbowGlow {
+                    0%   { filter: drop-shadow(0 0 4px red)    drop-shadow(0 0 10px red)    drop-shadow(0 0 20px red); }
+                    20%  { filter: drop-shadow(0 0 4px orange) drop-shadow(0 0 10px orange) drop-shadow(0 0 20px orange); }
+                    40%  { filter: drop-shadow(0 0 4px yellow) drop-shadow(0 0 10px yellow) drop-shadow(0 0 20px yellow); }
+                    60%  { filter: drop-shadow(0 0 4px green)  drop-shadow(0 0 10px green)  drop-shadow(0 0 20px green); }
+                    80%  { filter: drop-shadow(0 0 4px blue)   drop-shadow(0 0 10px blue)   drop-shadow(0 0 20px blue); }
+                    100% { filter: drop-shadow(0 0 4px violet) drop-shadow(0 0 10px violet) drop-shadow(0 0 20px violet); }
+                }
+
+                #__rbCursor.rainbow-glow svg {
+                    animation: rainbowGlow 3s linear infinite;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        createCursorElement();
+        attachMouseListeners();
+        loadSavedMousePreferences();
+        
+        console.log('[Unified Mouse V2] Initialized – with dynamic key switching');
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initialize);
+    } else {
+        initialize();
+    }
+
+})();
+</script>
+</body>
+
+</html>

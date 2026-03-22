@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Notes</title>
+<style>
+  body {
+    background: black;
+    color: #ddd;
+    font-family: Consolas, monospace;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+  }
+
+  #sidebar {
+    width: 240px;
+    background: black;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    overflow-y: auto;
+  }
+
+  #sidebarTitle {
+    color: red;
+    font-size: 23px;
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+			font-family:cursive;
+  }
+
+  #notesList button {
+    background: #444;
+    border: none;
+    color: red;
+    padding: 8px;
+    text-align: left;
+    margin-bottom: 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;                    /* take full available width */
+  white-space: normal;            /* allow text to wrap */
+  word-break: break-word;         /* break long words if needed */
+  overflow-wrap: break-word;      /* modern/standard version */
+  hyphens: auto;                  /* optional: add hyphenation in supported browsers */
+  line-height: 1.4;               /* makes wrapped lines look nicer */
+  min-height: 38px;
+  }
+
+  
+  #addBtn {
+    background: #444;
+    color: red;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+
+  
+
+  #main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  #editorHeader {
+    display: flex;
+  
+			justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  #editorHeader input {
+    background: black;
+    border: 1px solid maroon;
+    color: red;
+    padding: 6px;
+    border-radius: 4px;
+			outline:none;
+  }
+
+  #editorHeader button {
+    background: #444;
+    color: red;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 10px;
+    margin-left: 6px;
+    cursor: pointer;
+  }
+
+  
+
+  #editor {
+    flex: 1;
+    background: #1e1e1e;
+    color: red;
+    border: 1px solid maroon;
+    border-radius: 6px;
+    padding: 10px;
+    resize: none;
+    font-family: monospace;
+    font-size: 14px;
+    outline: none;
+  }
+</style>
+</head>
+
+<body>
+	
+  <div id="sidebar">
+    <div id="sidebarTitle">Notes</div>
+    <div id="notesList"></div>
+    <button id="addBtn">+ Add</button>
+  </div>
+
+  <div id="main">
+    <div id="editorHeader">
+      <input id="noteTitle" placeholder="Note Title" />
+      <div>
+        <button id="saveNote">Save</button>
+        <button id="deleteNote">Delete</button>
+        <button id="closeNote">Close</button>
+      </div>
+    </div>
+    <textarea id="editor" placeholder="Write your notes here..."></textarea>
+  </div>
+<style>
+/* Text shadow for all text elements */
+body, h1, h2, h3, h4, h5, h6, p, span, div, a, label, button, input, textarea, select, option {
+    text-shadow: 0 0 4px currentColor, 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor;
+}
+
+/* Softer glow for placeholders */
+::placeholder {
+    text-shadow: 0 0 3px currentColor, 0 0 8px currentColor;
+    opacity: 0.75;
+}
+
+/* Prevent glow on hidden elements */
+[style*="display: none"], [style*="visibility: hidden"] {
+    text-shadow: none !important;
+}
+
+/* Base transition for buttons */
+#addBtn, #notesList button, #saveNote, #deleteNote, #closeNote {
+    transition: all 0.9s ease;
+}
+
+/* Hover effect for buttons */
+#addBtn:hover, #notesList button:hover, #saveNote:hover, #deleteNote:hover, #closeNote:hover {
+    background: #222222;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.12) inset, 0 0 30px rgba(255,255,255,0.25);
+    transition: all 0.7s ease;
+}
+</style>
+<script>
+  const notesList = document.getElementById("notesList");
+  const addBtn = document.getElementById("addBtn");
+  const editor = document.getElementById("editor");
+  const noteTitle = document.getElementById("noteTitle");
+  const saveNote = document.getElementById("saveNote");
+  const deleteNote = document.getElementById("deleteNote");
+  const closeNote = document.getElementById("closeNote");
+
+  let notes = JSON.parse(localStorage.getItem("codeNotes") || "{}");
+  let currentNote = null;
+
+  function refreshNotesList() {
+    notesList.innerHTML = "";
+    for (const [key, note] of Object.entries(notes)) {
+      const btn = document.createElement("button");
+      btn.textContent = note.title;
+      btn.onclick = () => openNote(key);
+      notesList.appendChild(btn);
+    }
+  }
+
+  function openNote(id) {
+    currentNote = id;
+    noteTitle.value = notes[id].title;
+    editor.value = notes[id].content;
+  }
+
+  function saveCurrentNote() {
+    if (!noteTitle.value.trim()) {
+      alert("Please enter a title.");
+      return;
+    }
+    if (!currentNote) {
+      currentNote = Date.now().toString();
+    }
+    notes[currentNote] = {
+      title: noteTitle.value,
+      content: editor.value
+    };
+    localStorage.setItem("codeNotes", JSON.stringify(notes));
+    refreshNotesList();
+  }
+
+  function deleteCurrentNote() {
+    if (currentNote && confirm("Delete this note?")) {
+      delete notes[currentNote];
+      localStorage.setItem("codeNotes", JSON.stringify(notes));
+      noteTitle.value = "";
+      editor.value = "";
+      currentNote = null;
+      refreshNotesList();
+    }
+  }
+
+  addBtn.addEventListener("click", () => {
+    currentNote = null;
+    noteTitle.value = "";
+    editor.value = "";
+    noteTitle.focus();
+  });
+
+  saveNote.addEventListener("click", saveCurrentNote);
+  deleteNote.addEventListener("click", deleteCurrentNote);
+  closeNote.addEventListener("click", () => {
+    noteTitle.value = "";
+    editor.value = "";
+    currentNote = null;
+  });
+
+  refreshNotesList();
+</script>
+
+
+
+
+
+<script>
+  // Disable autocomplete, autocorrect, and spellcheck for all inputs and textareas
+  document.querySelectorAll("input, textarea").forEach(el => {
+    el.setAttribute("autocomplete", "off");
+    el.setAttribute("autocorrect", "off");
+    el.setAttribute("spellcheck", "false");
+  });
+</script>
+
+<script>
+
+(function() {
+    'use strict';
+
+    // ───────────────────────────────────────────────────────────────────
+    // 1. PAGE DETECTION (only for default color fallback)
+    // ───────────────────────────────────────────────────────────────────
+    const pageTitle = document.title.toLowerCase();
+    const isAdminFallback = pageTitle.includes('admin');
+    const defaultMouseColor = isAdminFallback ? 'rainbow' : 'red';
+    
+    console.log(`[Unified Mouse V2] Detected: ${isAdminFallback ? 'ADMIN' : 'REGULAR'} mode (fallback)`);
+
+    // ───────────────────────────────────────────────────────────────────
+    // 2. GLOBAL VARIABLES
+    // ───────────────────────────────────────────────────────────────────
+    let mouseActive = false;
+    let rainbow = false;
+    let currentColor = defaultMouseColor;
+    let cursorElement = null;
+    let isMouseInsideBounds = false;  // hidden until mouse enters
+    let storagePrefix = 'vortex';     // default to regular
+
+    // ───────────────────────────────────────────────────────────────────
+    // 3. DETERMINE STORAGE PREFIX based on 'vortexMode'
+    // ───────────────────────────────────────────────────────────────────
+    function getStoragePrefix() {
+        const mode = localStorage.getItem('vortexMode');
+        return (mode === 'admin') ? 'vortexadmin' : 'vortex';
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 4. CREATE CURSOR ELEMENT (with Vortex Admin rainbow-ready gradient)
+    // ───────────────────────────────────────────────────────────────────
+    function createCursorElement() {
+        cursorElement = document.getElementById('__rbCursor');
+        
+        if (!cursorElement) {
+            cursorElement = document.createElement('div');
+            cursorElement.id = '__rbCursor';
+            cursorElement.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 32px;
+                height: 32px;
+                pointer-events: none;
+                z-index: 2147483647;
+                transform: translate(-4px, -4px);
+                display: none;
+            `;
+            
+            cursorElement.innerHTML = `
+                <svg viewBox="0 0 32 32" width="100%" height="100%">
+                    <defs>
+                        <linearGradient id="rbGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%"   stop-color="#ff0000" />
+                            <stop offset="20%"  stop-color="#ff0000" />
+                            <stop offset="40%"  stop-color="#ff0000" />
+                            <stop offset="60%"  stop-color="#ff0000" />
+                            <stop offset="80%"  stop-color="#ff0000" />
+                            <stop offset="100%" stop-color="#ff0000" />
+                        </linearGradient>
+                    </defs>
+                    <polygon points="0,0 0,28 8,20 14,30 18,28 12,18 20,18" fill="url(#rbGradient)" />
+                </svg>
+            `;
+            
+            document.body.appendChild(cursorElement);
+        }
+        
+        return cursorElement;
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 5. APPLY COLOR (Vortex Admin style rainbow via stop animation)
+    // ───────────────────────────────────────────────────────────────────
+    function applyMouseColor(color) {
+        if (!cursorElement) return;
+        
+        const polygon = cursorElement.querySelector('polygon');
+        const svg     = cursorElement.querySelector('svg');
+        const stops   = cursorElement.querySelectorAll('stop');
+        
+        if (!polygon || !stops.length) return;
+
+        if (color === 'rainbow') {
+            rainbow = true;
+            polygon.setAttribute('fill', 'url(#rbGradient)');
+            stops.forEach(stop => {
+                stop.style.animation = 'rainbowShift 3s linear infinite';
+            });
+            cursorElement.classList.add('rainbow-glow');
+            if (svg) svg.style.filter = '';
+        } else {
+            rainbow = false;
+            polygon.setAttribute('fill', color);
+            stops.forEach(stop => {
+                stop.style.animation = 'none';
+                stop.style.stopColor = color;  // fallback solid
+            });
+            cursorElement.classList.remove('rainbow-glow');
+            if (svg) svg.style.filter = `drop-shadow(0 0 4px ${color}) drop-shadow(0 0 10px ${color}) drop-shadow(0 0 20px ${color})`;
+        }
+        
+        currentColor = color;
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 6. ACTIVATE / DEACTIVATE
+    // ───────────────────────────────────────────────────────────────────
+    function activateMouse() {
+        if (!cursorElement) createCursorElement();
+        
+        if (isMouseInsideBounds) {
+            cursorElement.style.display = 'block';
+        }
+        mouseActive = true;
+        
+        const savedColor = localStorage.getItem(`${storagePrefix}MouseColor`) || defaultMouseColor;
+        applyMouseColor(savedColor);
+        
+        localStorage.setItem(`${storagePrefix}MouseEnabled`, 'true');
+    }
+
+    function deactivateMouse() {
+        if (cursorElement) {
+            cursorElement.style.display = 'none';
+        }
+        mouseActive = false;
+        localStorage.setItem(`${storagePrefix}MouseEnabled`, 'false');
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 7. REFRESH FROM LATEST LOCALSTORAGE
+    // ───────────────────────────────────────────────────────────────────
+    function refreshFromLocalStorage() {
+        storagePrefix = getStoragePrefix();  // Re-check mode each time
+        
+        const enabledStr = localStorage.getItem(`${storagePrefix}MouseEnabled`);
+        const color = localStorage.getItem(`${storagePrefix}MouseColor`) || defaultMouseColor;
+
+        const shouldBeActive = enabledStr === 'true';
+
+        if (shouldBeActive !== mouseActive) {
+            if (shouldBeActive) {
+                activateMouse();
+            } else {
+                deactivateMouse();
+            }
+        } else if (shouldBeActive) {
+            applyMouseColor(color);
+        }
+
+        if (cursorElement) {
+            cursorElement.style.display = (mouseActive && isMouseInsideBounds) ? 'block' : 'none';
+        }
+        
+        console.log(`[Unified Mouse V2] Using prefix: ${storagePrefix} (mode: ${localStorage.getItem('vortexMode') || 'regular'})`);
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 8. MOUSE TRACKING + BOUNDARY DETECTION
+    // ───────────────────────────────────────────────────────────────────
+    function updateCursorPosition(e) {
+        if (!mouseActive || !cursorElement) return;
+        
+        const x = e.clientX;
+        const y = e.clientY;
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        
+        const buffer = 5;
+        const inside = (
+            x >= -buffer && x <= w + buffer &&
+            y >= -buffer && y <= h + buffer
+        );
+        
+        if (inside) {
+            if (!isMouseInsideBounds) {
+                isMouseInsideBounds = true;
+                refreshFromLocalStorage();
+                if (mouseActive) cursorElement.style.display = 'block';
+            }
+            cursorElement.style.left = x + 'px';
+            cursorElement.style.top = y + 'px';
+        } else {
+            if (isMouseInsideBounds) {
+                isMouseInsideBounds = false;
+                refreshFromLocalStorage();
+                cursorElement.style.display = 'none';
+            }
+        }
+    }
+
+    function handleMouseLeave() {
+        if (cursorElement) {
+            isMouseInsideBounds = false;
+            refreshFromLocalStorage();
+            cursorElement.style.display = 'none';
+        }
+    }
+
+    function handleMouseEnter() {
+        if (cursorElement) {
+            isMouseInsideBounds = true;
+            refreshFromLocalStorage();
+            if (mouseActive) cursorElement.style.display = 'block';
+        }
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 9. EVENT LISTENERS
+    // ───────────────────────────────────────────────────────────────────
+    function attachMouseListeners() {
+        document.addEventListener('mousemove', updateCursorPosition);
+        document.addEventListener('mouseleave', handleMouseLeave);
+        document.addEventListener('mouseenter', handleMouseEnter);
+        
+        window.addEventListener('mouseout', e => {
+            if (!e.relatedTarget && !e.toElement) handleMouseLeave();
+        });
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 10. LIVE SYNC FROM OTHER TABS
+    // ───────────────────────────────────────────────────────────────────
+    window.addEventListener('storage', e => {
+        if (e.key.startsWith('vortex') && (e.key.includes('MouseEnabled') || e.key.includes('MouseColor') || e.key === 'vortexMode')) {
+            refreshFromLocalStorage();
+        }
+    });
+
+    // ───────────────────────────────────────────────────────────────────
+    // 11. INITIAL LOAD
+    // ───────────────────────────────────────────────────────────────────
+    function loadSavedMousePreferences() {
+        refreshFromLocalStorage();
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 12. INITIALIZE – add EXACT Vortex Admin rainbow keyframes
+    // ───────────────────────────────────────────────────────────────────
+    function initialize() {
+        if (!document.getElementById('unifiedMouseStyles')) {
+            const style = document.createElement('style');
+            style.id = 'unifiedMouseStyles';
+            style.textContent = `
+                @keyframes rainbowShift {
+                    0%   { stop-color: red;    }
+                    20%  { stop-color: orange; }
+                    40%  { stop-color: yellow; }
+                    60%  { stop-color: green;  }
+                    80%  { stop-color: blue;   }
+                    100% { stop-color: violet; }
+                }
+
+                * {
+                    cursor: none !important;
+                }
+
+                /* Vortex Admin exact selector for rainbow */
+                #__rbCursor stop {
+                    animation: rainbowShift 3s linear infinite;
+                }
+
+                @keyframes rainbowGlow {
+                    0%   { filter: drop-shadow(0 0 4px red)    drop-shadow(0 0 10px red)    drop-shadow(0 0 20px red); }
+                    20%  { filter: drop-shadow(0 0 4px orange) drop-shadow(0 0 10px orange) drop-shadow(0 0 20px orange); }
+                    40%  { filter: drop-shadow(0 0 4px yellow) drop-shadow(0 0 10px yellow) drop-shadow(0 0 20px yellow); }
+                    60%  { filter: drop-shadow(0 0 4px green)  drop-shadow(0 0 10px green)  drop-shadow(0 0 20px green); }
+                    80%  { filter: drop-shadow(0 0 4px blue)   drop-shadow(0 0 10px blue)   drop-shadow(0 0 20px blue); }
+                    100% { filter: drop-shadow(0 0 4px violet) drop-shadow(0 0 10px violet) drop-shadow(0 0 20px violet); }
+                }
+
+                #__rbCursor.rainbow-glow svg {
+                    animation: rainbowGlow 3s linear infinite;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        createCursorElement();
+        attachMouseListeners();
+        loadSavedMousePreferences();
+        
+        console.log('[Unified Mouse V2] Initialized – with dynamic key switching');
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initialize);
+    } else {
+        initialize();
+    }
+
+})();
+</script>
+</body>
+</html>

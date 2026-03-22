@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Flappy Bird</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: sans-serif;
+            color: #eee;
+            background: #000;
+            background-size: cover;
+            background-position: center;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Credit text overlay */
+        #credit {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 18px;
+            color: white;
+            background: rgba(111, 111, 111, 0.7);
+            padding: 6px 16px;
+            border-radius: 8px;
+            z-index: 10001;
+            pointer-events: none;
+									font-family:cursive;
+        }
+
+        /* Settings button style */
+        .game-settings-btn {
+            
+									padding: 6px 12px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: 0;
+            background: #444;
+            color: white;
+            cursor: pointer;
+            white-space: nowrap;
+									transition:all 0.9s ease !important;
+        }
+        .game-settings-btn:hover {
+            transition:all 0.7s ease !important;
+									
+									background: #222222;
+									
+        }
+
+        /* Input fields */
+        .game-settings-input {
+            background: black;
+            color: white;
+            border: 1px solid #555;
+            padding: 4px;
+            border-radius: 4px;
+            width: 160px;
+            outline: none;
+        }
+
+        /* Placeholder text - light gray */
+        .game-settings-input::placeholder {
+            color: #aaa;
+            opacity: 1;
+        }
+
+        /* Remove spinner arrows from number inputs */
+        .game-settings-input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        .game-settings-input[type="number"]::-webkit-outer-spin-button,
+        .game-settings-input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="credit">Developed By Connor F999</div>
+
+    <!-- Flappy Bird Game Script -->
+    <script>
+        (function() {
+            let flappybird_active = false;
+
+            function flappybird_launch() {
+                if (flappybird_active) return;
+                flappybird_active = true;
+
+                document.getElementById('flappybirdCanvas')?.remove();
+
+                const headerH = document.querySelector('header')?.offsetHeight || 0;
+                const canvas = document.createElement('canvas');
+                canvas.id = 'flappybirdCanvas';
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight - headerH;
+                canvas.style.position = 'absolute';
+                canvas.style.top = headerH + 'px';
+                canvas.style.left = 0;
+                canvas.style.zIndex = 9998;
+                document.body.appendChild(canvas);
+                const ctx = canvas.getContext('2d');
+
+                let settings = {
+                    gravity: 0.5,
+                    flap: -8,
+                    pipeGap: 140,
+                    pipeSpeed: 3,
+                    bgColor: 'skyblue',
+                    birdColor: 'yellow',
+                    pipeColor: 'green',
+                    groundColor: 'burlywood',
+                    birdShape: 'circle'
+                };
+
+                const validColors = ['rainbow', 'red', 'blue', 'green', 'yellow', 'orange', 'purple', 'pink', 'black', 'white', 'gray', 'grey', 'brown', 'cyan', 'magenta', 'lime', 'navy', 'teal', 'aqua', 'maroon', 'olive', 'silver', 'gold', 'tan', 'beige', 'skyblue', 'burlywood', 'crimson', 'indigo', 'violet', 'turquoise', 'salmon', 'coral', 'khaki', 'lavender', 'plum'];
+                
+                const validShapes = ['circle', 'triangle', 'square'];
+
+                let bird = {
+                    x: canvas.width * 0.25,
+                    y: canvas.height / 2,
+                    r: 16,
+                    vy: 0
+                };
+                let pipes = [],
+                    frame = 0,
+                    score = 0,
+                    best = parseInt(localStorage.getItem('flappyBestScore') || '0'),
+                    newBest = false,
+                    gameOver = false,
+                    started = false,
+                    paused = false;
+                
+                let hue = 0;
+
+                function createMenu() {
+                    const menu = document.createElement('div');
+                    menu.id = 'flappybirdMenu';
+                    menu.style.position = 'fixed';
+                    menu.style.top = '50%';
+                    menu.style.left = '50%';
+                    menu.style.transform = 'translate(-50%, -50%)';
+                    menu.style.width = '300px';
+                    menu.style.padding = '15px';
+                    menu.style.background = 'rgba(0,0,0,0.9)';
+                    menu.style.color = '#fff';
+                    menu.style.fontSize = '14px';
+                    menu.style.zIndex = 9999;
+                    menu.style.borderRadius = '10px';
+                    menu.style.display = 'none';
+                    menu.innerHTML = `
+              <h3 style="margin-top:0; color: white;">Flappy Bird Settings</h3>
+              <label>Background: <input id="flappy_bg" type="text" value="${settings.bgColor}" placeholder="skyblue" class="game-settings-input" autocomplete="off" autocorrect="off" spellcheck="false" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')"></label><br><br>
+              <label>Flappy Bird: <input id="flappy_bird" type="text" value="${settings.birdColor}" placeholder="yellow" class="game-settings-input" autocomplete="off" autocorrect="off" spellcheck="false" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')"></label><br><br>
+              <label>Flappy Bird Shape: <input id="flappy_shape" type="text" value="${settings.birdShape}" placeholder="circle" class="game-settings-input" autocomplete="off" autocorrect="off" spellcheck="false" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')"></label><br><br>
+              <label>Pipes: <input id="flappy_pipe" type="text" value="${settings.pipeColor}" placeholder="green" class="game-settings-input" autocomplete="off" autocorrect="off" spellcheck="false" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')"></label><br><br>
+              <label>Ground: <input id="flappy_ground" type="text" value="${settings.groundColor}" placeholder="burlywood" class="game-settings-input" autocomplete="off" autocorrect="off" spellcheck="false" oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')"></label><br><br>
+              <label>Gravity: <input id="flappy_gravity" type="number" value="${settings.gravity}" placeholder="0.5" step="0.1" class="game-settings-input" autocomplete="off" autocorrect="off" spellcheck="false"></label><br><br>
+              <label>Pipe Speed: <input id="flappy_speed" type="number" value="${settings.pipeSpeed}" placeholder="3" class="game-settings-input" autocomplete="off" autocorrect="off" spellcheck="false"></label><br><br>
+              <label>Level: <input id="flappy_level" type="number" value="1" placeholder="1" min="1" class="game-settings-input" autocomplete="off" autocorrect="off" spellcheck="false"></label><br><br>
+            `;
+                    document.body.appendChild(menu);
+
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.textContent = 'Flappy Bird Settings';
+                    toggleBtn.className = 'game-settings-btn';
+                    toggleBtn.style.position = 'fixed';
+                    toggleBtn.style.bottom = '10px';
+                    toggleBtn.style.right = '10px';
+                    toggleBtn.style.zIndex = 9999;
+                    toggleBtn.onclick = () => {
+                        menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+                    };
+                    document.body.appendChild(toggleBtn);
+                }
+                createMenu();
+
+                function spawnPipe() {
+                    let h = Math.random() * (canvas.height - 200) + 50;
+                    pipes.push({
+                        x: canvas.width,
+                        top: h,
+                        passed: false
+                    });
+                }
+
+                function reset() {
+                    bird.y = canvas.height / 2;
+                    bird.vy = 0;
+                    pipes = [];
+                    frame = 0;
+                    score = 0;
+                    newBest = false;
+                    gameOver = false;
+                    started = false;
+                    paused = false;
+                }
+
+                function drawBird() {
+                    if (settings.birdShape === 'triangle') {
+                        ctx.fillStyle = (settings.birdColor === 'rainbow') ? `hsl(${(hue+280)%360},100%,60%)` : settings.birdColor;
+                        ctx.beginPath();
+                        ctx.moveTo(bird.x - bird.r, bird.y + bird.r);
+                        ctx.lineTo(bird.x, bird.y - bird.r);
+                        ctx.lineTo(bird.x + bird.r, bird.y + bird.r);
+                        ctx.closePath();
+                        ctx.fill();
+                    } else if (settings.birdShape === 'square') {
+                        ctx.fillStyle = (settings.birdColor === 'rainbow') ? `hsl(${(hue+280)%360},100%,60%)` : settings.birdColor;
+                        ctx.fillRect(bird.x - bird.r, bird.y - bird.r, bird.r * 2, bird.r * 2);
+                    } else {
+                        ctx.fillStyle = (settings.birdColor === 'rainbow') ? `hsl(${(hue+280)%360},100%,60%)` : settings.birdColor;
+                        ctx.beginPath();
+                        ctx.arc(bird.x, bird.y, bird.r, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+
+                function draw() {
+                    hue = frame * 2 % 360;
+
+                    ctx.fillStyle = (settings.bgColor === 'rainbow') ? `hsl(${hue},100%,70%)` : settings.bgColor;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    for (let p of pipes) {
+                        ctx.fillStyle = (settings.pipeColor === 'rainbow') ? `hsl(${(hue+120)%360},100%,40%)` : settings.pipeColor;
+                        ctx.fillRect(p.x, 0, 60, p.top);
+                        ctx.fillRect(p.x, p.top + settings.pipeGap, 60, canvas.height - p.top - settings.pipeGap - 80);
+                    }
+
+                    ctx.fillStyle = (settings.groundColor === 'rainbow') ? `hsl(${(hue+200)%360},100%,50%)` : settings.groundColor;
+                    ctx.fillRect(0, canvas.height - 80, canvas.width, 80);
+
+                    drawBird();
+
+                    // CHANGED: Dynamic text color based on background
+                    ctx.fillStyle = (settings.bgColor === 'black') ? 'white' : '#000';
+                    ctx.font = '20px sans-serif';
+                    ctx.fillText('Score: ' + score, 10, 25);
+                    ctx.fillText('Best: ' + best, 10, 55);
+                    if (paused) ctx.fillText('PAUSED', 10, 80);
+                }
+
+                function update() {
+                    let inputBg = document.getElementById('flappy_bg')?.value.toLowerCase().trim();
+                    let inputBird = document.getElementById('flappy_bird')?.value.toLowerCase().trim();
+                    let inputPipe = document.getElementById('flappy_pipe')?.value.toLowerCase().trim();
+                    let inputGround = document.getElementById('flappy_ground')?.value.toLowerCase().trim();
+                    let inputShape = document.getElementById('flappy_shape')?.value.toLowerCase().trim();
+
+                    if (validColors.includes(inputBg)) {
+                        settings.bgColor = inputBg;
+                    }
+                    if (validColors.includes(inputBird)) {
+                        settings.birdColor = inputBird;
+                    }
+                    if (validColors.includes(inputPipe)) {
+                        settings.pipeColor = inputPipe;
+                    }
+                    if (validColors.includes(inputGround)) {
+                        settings.groundColor = inputGround;
+                    }
+                    if (validShapes.includes(inputShape)) {
+                        settings.birdShape = inputShape;
+                    }
+
+                    settings.gravity = parseFloat(document.getElementById('flappy_gravity')?.value || settings.gravity);
+                    settings.pipeSpeed = parseFloat(document.getElementById('flappy_speed')?.value || settings.pipeSpeed);
+                    let level = parseInt(document.getElementById('flappy_level')?.value || 1);
+                    settings.pipeGap = Math.max(200 - level * 10, 60);
+
+                    // CHANGED: Always increment frame so rainbow always animates (even when paused or game over)
+                    if (started) {
+                        frame++;
+                    }
+
+                    if (started && !gameOver && !paused) {
+                        bird.vy += settings.gravity;
+                        bird.y += bird.vy;
+                        if (frame % 100 === 0) spawnPipe();
+                        for (let p of pipes) {
+                            p.x -= settings.pipeSpeed;
+                            if (!p.passed && p.x + 60 < bird.x) {
+                                p.passed = true;
+                                score++;
+                            }
+                            if (bird.x + bird.r > p.x && bird.x - bird.r < p.x + 60) {
+                                if (bird.y - bird.r < p.top || bird.y + bird.r > p.top + settings.pipeGap) {
+                                    gameOver = true;
+                                    if (score > best) {
+                                        best = score;
+                                        newBest = true;
+                                        localStorage.setItem('flappyBestScore', best);
+                                    }
+                                }
+                            }
+                        }
+                        if (bird.y + bird.r > canvas.height - 80) {
+                            gameOver = true;
+                            if (score > best) {
+                                best = score;
+                                newBest = true;
+                                localStorage.setItem('flappyBestScore', best);
+                            }
+                        }
+                    }
+                    draw();
+                    if (gameOver) {
+                        // CHANGED: Show rainbow background in game over screen
+                        ctx.fillStyle = (settings.bgColor === 'rainbow') ? `hsl(${hue},100%,70%)` : settings.bgColor;
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        
+                        // CHANGED: Dynamic text color for game over
+                        ctx.fillStyle = (settings.bgColor === 'black') ? 'white' : 'black';
+                        ctx.font = '24px sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.fillText("Game Over!", canvas.width / 2, canvas.height / 2 - 30);
+                        ctx.fillText("Score: " + score, canvas.width / 2, canvas.height / 2);
+                        if (newBest) {
+                            ctx.fillText("Personal Best", canvas.width / 2, canvas.height / 2 + 30);
+                        }
+                        ctx.fillText("Emotional Damage", canvas.width / 2, canvas.height / 2 + 60);
+                        ctx.textAlign = 'left';
+                    }
+                    requestAnimationFrame(update);
+                }
+
+                function flap() {
+                    if (gameOver) {
+                        reset();
+                        return;
+                    }
+                    started = true;
+                    bird.vy = settings.flap;
+                }
+                
+                function key(e) {
+                    const menu = document.getElementById('flappybirdMenu');
+                    const isMenuOpen = menu && menu.style.display === 'block';
+
+                    // CHANGED: Block Space when menu is open
+                    if (e.code === 'Space' && !isMenuOpen) {
+                        e.preventDefault();
+                        flap();
+                    }
+                    
+                    if (e.key.toLowerCase() === 'p' && started && !gameOver && !isMenuOpen) {
+                        paused = !paused;
+                    }
+                }
+                window.addEventListener('keydown', key);
+
+                reset();
+                update();
+            }
+
+            window.addEventListener('load', flappybird_launch);
+        })();
+    </script>
+   <style>   /* Glow for all visible text elements */   body, h1, h2, h3, h4, h5, h6, p, span, div, a, label, button, input, textarea, select, option {     text-shadow:        0 0 4px currentColor,       0 0 10px currentColor,       0 0 20px currentColor;   }    /* A bit stronger for headings and important text */   h1, h2, h3, .title, #sidebarTitle, #passwordPrompt, #finalMessage, #trapText {     text-shadow:        0 0 6px currentColor,       0 0 14px currentColor,       0 0 28px currentColor;   }    /* Softer glow for placeholders */   ::placeholder {     text-shadow:        0 0 3px currentColor,       0 0 8px currentColor;     opacity: 0.75;   }    /* Prevent glow on hidden elements */   [style*="display: none"], [style*="visibility: hidden"] {     text-shadow: none !important;   } </style>
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+// UNIFIED MOUSE CURSOR SYSTEM V2 - Dynamic key switching based on mode
+// ═══════════════════════════════════════════════════════════════════════
+// Features (same as original):
+// - Cursor starts HIDDEN until mouse enters viewport/HTML boundaries
+// - Uses exact polygon cursor shape from Vortex Browser Admin.html
+// - Rainbow animation copied EXACTLY from Vortex Admin (@keyframes rainbowShift on <stop>)
+// - Initial load from localStorage
+// - Real-time sync via storage event (other tabs)
+// - Boundary events trigger fresh localStorage check
+// - Hides cursor when mouse leaves HTML boundaries
+//
+// NEW: Dynamic key switching
+// - Checks 'vortexMode' key (set by launcher pages)
+// - If 'admin', uses 'vortexadminMouseEnabled' and 'vortexadminMouseColor'
+// - If 'regular' (or missing), uses 'vortexMouseEnabled' and 'vortexMouseColor'
+// - Admin default color: 'rainbow'
+// - Regular default color: 'red'
+// ═══════════════════════════════════════════════════════════════════════
+
+(function() {
+    'use strict';
+
+    // ───────────────────────────────────────────────────────────────────
+    // 1. PAGE DETECTION (only for default color fallback)
+    // ───────────────────────────────────────────────────────────────────
+    const pageTitle = document.title.toLowerCase();
+    const isAdminFallback = pageTitle.includes('admin');
+    const defaultMouseColor = isAdminFallback ? 'rainbow' : 'red';
+    
+    console.log(`[Unified Mouse V2] Detected: ${isAdminFallback ? 'ADMIN' : 'REGULAR'} mode (fallback)`);
+
+    // ───────────────────────────────────────────────────────────────────
+    // 2. GLOBAL VARIABLES
+    // ───────────────────────────────────────────────────────────────────
+    let mouseActive = false;
+    let rainbow = false;
+    let currentColor = defaultMouseColor;
+    let cursorElement = null;
+    let isMouseInsideBounds = false;  // hidden until mouse enters
+    let storagePrefix = 'vortex';     // default to regular
+
+    // ───────────────────────────────────────────────────────────────────
+    // 3. DETERMINE STORAGE PREFIX based on 'vortexMode'
+    // ───────────────────────────────────────────────────────────────────
+    function getStoragePrefix() {
+        const mode = localStorage.getItem('vortexMode');
+        return (mode === 'admin') ? 'vortexadmin' : 'vortex';
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 4. CREATE CURSOR ELEMENT (with Vortex Admin rainbow-ready gradient)
+    // ───────────────────────────────────────────────────────────────────
+    function createCursorElement() {
+        cursorElement = document.getElementById('__rbCursor');
+        
+        if (!cursorElement) {
+            cursorElement = document.createElement('div');
+            cursorElement.id = '__rbCursor';
+            cursorElement.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 32px;
+                height: 32px;
+                pointer-events: none;
+                z-index: 2147483647;
+                transform: translate(-4px, -4px);
+                display: none;
+            `;
+            
+            cursorElement.innerHTML = `
+                <svg viewBox="0 0 32 32" width="100%" height="100%">
+                    <defs>
+                        <linearGradient id="rbGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%"   stop-color="#ff0000" />
+                            <stop offset="20%"  stop-color="#ff0000" />
+                            <stop offset="40%"  stop-color="#ff0000" />
+                            <stop offset="60%"  stop-color="#ff0000" />
+                            <stop offset="80%"  stop-color="#ff0000" />
+                            <stop offset="100%" stop-color="#ff0000" />
+                        </linearGradient>
+                    </defs>
+                    <polygon points="0,0 0,28 8,20 14,30 18,28 12,18 20,18" fill="url(#rbGradient)" />
+                </svg>
+            `;
+            
+            document.body.appendChild(cursorElement);
+        }
+        
+        return cursorElement;
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 5. APPLY COLOR (Vortex Admin style rainbow via stop animation)
+    // ───────────────────────────────────────────────────────────────────
+    function applyMouseColor(color) {
+        if (!cursorElement) return;
+        
+        const polygon = cursorElement.querySelector('polygon');
+        const svg     = cursorElement.querySelector('svg');
+        const stops   = cursorElement.querySelectorAll('stop');
+        
+        if (!polygon || !stops.length) return;
+
+        if (color === 'rainbow') {
+            rainbow = true;
+            polygon.setAttribute('fill', 'url(#rbGradient)');
+            stops.forEach(stop => {
+                stop.style.animation = 'rainbowShift 3s linear infinite';
+            });
+            cursorElement.classList.add('rainbow-glow');
+            if (svg) svg.style.filter = '';
+        } else {
+            rainbow = false;
+            polygon.setAttribute('fill', color);
+            stops.forEach(stop => {
+                stop.style.animation = 'none';
+                stop.style.stopColor = color;  // fallback solid
+            });
+            cursorElement.classList.remove('rainbow-glow');
+            if (svg) svg.style.filter = `drop-shadow(0 0 4px ${color}) drop-shadow(0 0 10px ${color}) drop-shadow(0 0 20px ${color})`;
+        }
+        
+        currentColor = color;
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 6. ACTIVATE / DEACTIVATE
+    // ───────────────────────────────────────────────────────────────────
+    function activateMouse() {
+        if (!cursorElement) createCursorElement();
+        
+        if (isMouseInsideBounds) {
+            cursorElement.style.display = 'block';
+        }
+        mouseActive = true;
+        
+        const savedColor = localStorage.getItem(`${storagePrefix}MouseColor`) || defaultMouseColor;
+        applyMouseColor(savedColor);
+        
+        localStorage.setItem(`${storagePrefix}MouseEnabled`, 'true');
+    }
+
+    function deactivateMouse() {
+        if (cursorElement) {
+            cursorElement.style.display = 'none';
+        }
+        mouseActive = false;
+        localStorage.setItem(`${storagePrefix}MouseEnabled`, 'false');
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 7. REFRESH FROM LATEST LOCALSTORAGE
+    // ───────────────────────────────────────────────────────────────────
+    function refreshFromLocalStorage() {
+        storagePrefix = getStoragePrefix();  // Re-check mode each time
+        
+        const enabledStr = localStorage.getItem(`${storagePrefix}MouseEnabled`);
+        const color = localStorage.getItem(`${storagePrefix}MouseColor`) || defaultMouseColor;
+
+        const shouldBeActive = enabledStr === 'true';
+
+        if (shouldBeActive !== mouseActive) {
+            if (shouldBeActive) {
+                activateMouse();
+            } else {
+                deactivateMouse();
+            }
+        } else if (shouldBeActive) {
+            applyMouseColor(color);
+        }
+
+        if (cursorElement) {
+            cursorElement.style.display = (mouseActive && isMouseInsideBounds) ? 'block' : 'none';
+        }
+        
+        console.log(`[Unified Mouse V2] Using prefix: ${storagePrefix} (mode: ${localStorage.getItem('vortexMode') || 'regular'})`);
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 8. MOUSE TRACKING + BOUNDARY DETECTION
+    // ───────────────────────────────────────────────────────────────────
+    function updateCursorPosition(e) {
+        if (!mouseActive || !cursorElement) return;
+        
+        const x = e.clientX;
+        const y = e.clientY;
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        
+        const buffer = 5;
+        const inside = (
+            x >= -buffer && x <= w + buffer &&
+            y >= -buffer && y <= h + buffer
+        );
+        
+        if (inside) {
+            if (!isMouseInsideBounds) {
+                isMouseInsideBounds = true;
+                refreshFromLocalStorage();
+                if (mouseActive) cursorElement.style.display = 'block';
+            }
+            cursorElement.style.left = x + 'px';
+            cursorElement.style.top = y + 'px';
+        } else {
+            if (isMouseInsideBounds) {
+                isMouseInsideBounds = false;
+                refreshFromLocalStorage();
+                cursorElement.style.display = 'none';
+            }
+        }
+    }
+
+    function handleMouseLeave() {
+        if (cursorElement) {
+            isMouseInsideBounds = false;
+            refreshFromLocalStorage();
+            cursorElement.style.display = 'none';
+        }
+    }
+
+    function handleMouseEnter() {
+        if (cursorElement) {
+            isMouseInsideBounds = true;
+            refreshFromLocalStorage();
+            if (mouseActive) cursorElement.style.display = 'block';
+        }
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 9. EVENT LISTENERS
+    // ───────────────────────────────────────────────────────────────────
+    function attachMouseListeners() {
+        document.addEventListener('mousemove', updateCursorPosition);
+        document.addEventListener('mouseleave', handleMouseLeave);
+        document.addEventListener('mouseenter', handleMouseEnter);
+        
+        window.addEventListener('mouseout', e => {
+            if (!e.relatedTarget && !e.toElement) handleMouseLeave();
+        });
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 10. LIVE SYNC FROM OTHER TABS
+    // ───────────────────────────────────────────────────────────────────
+    window.addEventListener('storage', e => {
+        if (e.key.startsWith('vortex') && (e.key.includes('MouseEnabled') || e.key.includes('MouseColor') || e.key === 'vortexMode')) {
+            refreshFromLocalStorage();
+        }
+    });
+
+    // ───────────────────────────────────────────────────────────────────
+    // 11. INITIAL LOAD
+    // ───────────────────────────────────────────────────────────────────
+    function loadSavedMousePreferences() {
+        refreshFromLocalStorage();
+    }
+
+    // ───────────────────────────────────────────────────────────────────
+    // 12. INITIALIZE – add EXACT Vortex Admin rainbow keyframes
+    // ───────────────────────────────────────────────────────────────────
+    function initialize() {
+        if (!document.getElementById('unifiedMouseStyles')) {
+            const style = document.createElement('style');
+            style.id = 'unifiedMouseStyles';
+            style.textContent = `
+                @keyframes rainbowShift {
+                    0%   { stop-color: red;    }
+                    20%  { stop-color: orange; }
+                    40%  { stop-color: yellow; }
+                    60%  { stop-color: green;  }
+                    80%  { stop-color: blue;   }
+                    100% { stop-color: violet; }
+                }
+
+                * {
+                    cursor: none !important;
+                }
+
+                /* Vortex Admin exact selector for rainbow */
+                #__rbCursor stop {
+                    animation: rainbowShift 3s linear infinite;
+                }
+
+                @keyframes rainbowGlow {
+                    0%   { filter: drop-shadow(0 0 4px red)    drop-shadow(0 0 10px red)    drop-shadow(0 0 20px red); }
+                    20%  { filter: drop-shadow(0 0 4px orange) drop-shadow(0 0 10px orange) drop-shadow(0 0 20px orange); }
+                    40%  { filter: drop-shadow(0 0 4px yellow) drop-shadow(0 0 10px yellow) drop-shadow(0 0 20px yellow); }
+                    60%  { filter: drop-shadow(0 0 4px green)  drop-shadow(0 0 10px green)  drop-shadow(0 0 20px green); }
+                    80%  { filter: drop-shadow(0 0 4px blue)   drop-shadow(0 0 10px blue)   drop-shadow(0 0 20px blue); }
+                    100% { filter: drop-shadow(0 0 4px violet) drop-shadow(0 0 10px violet) drop-shadow(0 0 20px violet); }
+                }
+
+                #__rbCursor.rainbow-glow svg {
+                    animation: rainbowGlow 3s linear infinite;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        createCursorElement();
+        attachMouseListeners();
+        loadSavedMousePreferences();
+        
+        console.log('[Unified Mouse V2] Initialized – with dynamic key switching');
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initialize);
+    } else {
+        initialize();
+    }
+
+})();
+</script>
+</body>
+</html>
