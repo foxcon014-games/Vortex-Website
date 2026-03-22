@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>localStorage.setItem('loading','true');</script>
+    <meta charset="utf-8">
+    <title>Vortex Launcher</title>
+    <link rel="icon" href="Launcher.ico" type="image/x-icon">
+    
+    <style>
+        /* ── Loading Screen ── */
+        #vortexLoadingScreen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #000;
+            z-index: 2147483647;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #vortexLoadingText {
+            color: #00ff00;
+            font-size: 48px;
+            font-weight: bold;
+            font-family:VT323;
+            text-shadow:
+                0 0 4px #00ff00, 0 0 10px #00ff00, 0 0 20px #00ff00,
+                0 0 6px #00ff00, 0 0 14px #00ff00, 0 0 28px #00ff00;
+        }
+
+        /* ── Custom cursor ── */
+        * { cursor: none !important; }
+        #__rbCursor {
+            position: fixed;
+            top: 0; left: 0;
+            width: 32px; height: 32px;
+            pointer-events: none;
+            z-index: 2147483647;
+            transform: translate(-4px, -4px);
+            display: none;
+            filter:
+                drop-shadow(0 0 4px #00ff00)
+                drop-shadow(0 0 10px #00ff00)
+                drop-shadow(0 0 20px #00ff00);
+        }
+        #__rbCursor svg { width: 100%; height: 100%; }
+
+        /* ── Body ── */
+        body {
+            margin:0; padding:0; height:100vh;
+            background:#000; color:#eee; font-family:sans-serif;
+            display:flex; flex-direction:column;
+            justify-content:center; align-items:center;
+        }
+
+        /* ── Title green glow ── */
+        h1 {
+            margin-bottom:1rem;
+            color: #00ff00;
+            font-size: 3.8rem;
+            font-weight: bold;
+            text-shadow:
+                0 0 7px #00ff00,
+                0 0 20px #00ff00,
+                0 0 40px #00ff00,
+                0 0 80px #00ff0088;
+        }
+
+        /* ── Buttons base ── */
+        button {
+            padding:1rem 3rem; font-size:1.4rem; margin:1rem;
+            min-width:360px; border:none; border-radius:8px;
+            cursor:pointer; background:#333; color:white;
+            
+            font-weight:bold; 
+        }
+        .normal { color:#00ff00; }
+        .admin { color:#00ff00; }
+        .admin:hover { color:#00ff00; }
+        
+           
+            
+        
+
+        /* ── Private window button ── */
+        #privateWindowBtn {
+            color: #00ff00;
+            background:#333; 
+            padding:0.2rem 0.6rem; font-size:0.6rem; margin:0;
+            min-width:90px; border:none; border-radius:3px;
+            
+        }
+        
+        
+
+        /* ── Incognito button green ── */
+        #incognitoBtn {
+            color: #00ff00;
+           
+            
+        }
+        
+        
+
+        /* ── Trap / Close This Tab ── */
+        #trap {
+            position:fixed; inset:0; background:#000; 
+            font-size:2.8rem; font-weight:bold; display:none;
+            justify-content:center; align-items:center; text-align:center;
+            z-index:999999; user-select:none; pointer-events:all;
+            line-height:1.4; padding:0 5%;
+        }
+        #trap ~ * { pointer-events:none; }
+        #finalMessage {
+            font-size:5.2rem;
+            color: #00ff00;
+            background:#000;
+            top:0; 
+            left:0; 
+            width:100vw; 
+            height:100vh;
+            display:none; 
+            justify-content:center; 
+            align-items:center;
+            text-align:center; 
+            overflow:hidden; 
+            font-family:VT323;
+            text-shadow:
+                0 0 20px #00ff00,
+                0 0 50px #00ff00,
+                0 0 100px #00ff00cc,
+                0 0 150px #00ff0088,
+                0 0 600px #00ff0066,
+                0 0 1200px #00ff0044,
+                0 0 2000px #00ff0033,
+                0 0 3000px #00ff0022;
+        }
+
+        .flicker-text { transition:opacity 0.08s ease, text-shadow 0.12s ease, filter 0.15s ease; }
+    </style>
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div id="vortexLoadingScreen">
+    <span id="vortexLoadingText">Loading Assets</span>
+</div>
+<script>
+(function(){
+    var dots=0, base='Loading Assets';
+    var el=document.getElementById('vortexLoadingText');
+    setInterval(function(){
+        dots=(dots%3)+1;
+        var d=''; for(var i=0;i<dots;i++) d+='.';
+        el.textContent=base+d;
+    },500);
+})();
+</script>
+
+<!-- Custom cursor -->
+<div id="__rbCursor">
+    <svg viewBox="0 0 32 32">
+        <polygon points="0,0 0,28 8,20 14,30 18,28 12,18 20,18" fill="#00ff00" />
+    </svg>
+</div>
+
+<h1 class="flicker-text" id="title" style="text-align:center;position:relative; font-family:cursive;">
+    Vortex Launcher <br>
+    <span style="position:absolute;font-size:0.35em;bottom:-12px;left:50%;transform:translateX(-50%);white-space:nowrap;color:#00ff00;font-family:cursive;">
+        (Stable Build - v26.40.5) 13/10/25
+    </span>
+</h1>
+
+<button id="privateWindowBtn" onclick="openPrivateWindow()">Open In Private Window</button>
+<button class="normal" onclick="triggerTrapAndOpen('Vortex_Browser.html')">Vortex Browser</button>
+<button class="admin" onclick="triggerTrapAndOpen('Vortex_Browser_Admin.html')">Vortex Browser Admin</button>
+<button id="incognitoBtn" onclick="handleIncognitoBtn()">Incognito Mode Off</button>
+
+<div id="trap">
+    <div id="finalMessage">Close This Tab</div>
+</div>
+<style>
+/* Text shadow for all text elements */
+body, h1, h2, h3, h4, h5, h6, p, span, div, a, label, button, input, textarea, select, option {
+    text-shadow: 0 0 4px currentColor, 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor;
+}
+
+/* Softer glow for placeholders */
+::placeholder {
+    text-shadow: 0 0 3px currentColor, 0 0 8px currentColor;
+    opacity: 0.75;
+}
+
+/* Prevent glow on hidden elements */
+[style*="display: none"], [style*="visibility: hidden"] {
+    text-shadow: none !important;
+}
+
+/* Base transition for buttons */
+button, .normal, .admin, #privateWindowBtn, #incognitoBtn {
+    transition: all 0.9s ease;
+}
+
+/* Hover effect for buttons */
+button:hover, .normal:hover, .admin:hover, #privateWindowBtn:hover, #incognitoBtn:hover {
+    background: #222222;
+    box-shadow:0 0 0 1px rgba(0,255,0,0.15) inset, 0 0 24px rgba(0,255,0,0.3);
+    transition: all 0.7s ease;
+    opacity:0.65;
+}
+</style>
+<script>
+// ── Custom cursor (exact same logic as Vortex Browser) ──
+var cursor = document.getElementById('__rbCursor');
+var mouseActive = false;
+
+function activateMouse() {
+    window.addEventListener('mousemove', moveCursor);
+    document.body.style.cursor = 'none';
+    document.addEventListener('mouseleave', hideCursorOnLeave);
+    document.addEventListener('mouseenter', showCursorOnEnter);
+}
+function moveCursor(e) {
+    if (!mouseActive) { mouseActive = true; }
+    cursor.style.display = 'block';
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
+}
+function hideCursorOnLeave() {
+    cursor.style.display = 'none';
+}
+function showCursorOnEnter() {
+    if (mouseActive) cursor.style.display = 'block';
+}
+
+// ── Incognito state from localStorage ──
+var incognitoMode = localStorage.getItem('vortex_incognito') === 'on';
+
+function isStandaloneWindow() {
+    return !window.menubar.visible || !window.toolbar.visible ||
+           (window.opener !== null && window.outerWidth < window.screen.availWidth - 100);
+}
+
+function showTrap() {
+    document.getElementById('trap').style.display = 'flex';
+    document.getElementById('finalMessage').style.display = 'flex';
+    setTimeout(startRealisticFlicker, 10);
+}
+
+// ── Interceptor: overrides window.open in every about:blank page so links chain infinitely ──
+var INTERCEPTOR = '(function(){'
+    + 'if(window.__vi)return;window.__vi=true;'
+    + 'var _r=window.open.bind(window);'
+    + 'window.open=function(url,target,features){'
+    + '  if(!url||url==="about:blank"||url===""||/^javascript/i.test(url))return _r(url,target,features);'
+    + '  var sa=!window.menubar.visible||!window.toolbar.visible||(window.opener!==null&&window.outerWidth<window.screen.availWidth-100);'
+    + '  var nw=sa?_r("about:blank","_blank","width=1200,height=900,menubar=no,toolbar=no,location=no,status=no"):_r("about:blank","_blank");'
+    + '  if(nw){'
+    + '    var ic="ICSRC";'
+    + '    var pg="<!DOCTYPE html><html><head><title>Vortex Incognito</title><scr"+"ipt>"+ic+"<\\/scr"+"ipt></head>"'
+    + '      +"<body style=\'margin:0;background:#000;overflow:hidden\'>"'
+    + '      +"<iframe src=\'"+url+"\' style=\'width:100%;height:100vh;border:0\' allowfullscreen allow=\'fullscreen\'><\\/iframe>"'
+    + '      +"<\\/body><\\/html>";'
+    + '    nw.document.open();nw.document.write(pg);nw.document.close();'
+    + '  }'
+    + '  return nw;'
+    + '};'
+    + 'document.addEventListener("click",function(e){'
+    + '  var a=e.target.closest("a");'
+    + '  if(!a||!a.href||a.href==="about:blank"||a.href.startsWith("javascript"))return;'
+    + '  if(a.getAttribute("target")==="_blank"||a.getAttribute("target")==="_new"){e.preventDefault();window.open(a.href);}'
+    + '});'
+    + '})();';
+
+function buildInterceptor() {
+    // Escape the interceptor source so it can be embedded as a string literal inside itself
+    var escaped = INTERCEPTOR
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/\r?\n/g, '');
+    // Replace the ICSRC placeholder with the escaped self-copy
+    return INTERCEPTOR.replace('"ICSRC"', "'" + escaped.replace('"ICSRC"', "''") + "'");
+}
+
+function buildWrapper(targetUrl) {
+    var ic = buildInterceptor();
+    return '<!DOCTYPE html><html><head><title>Vortex Incognito</title>'
+        + '<script>' + ic + '<\/script>'
+        + '</head><body style="margin:0;background:#000;overflow:hidden">'
+        + '<iframe src="' + targetUrl + '" style="width:100%;height:100vh;border:0" allowfullscreen allow="fullscreen"></iframe>'
+        + '</body></html>';
+}
+
+function openInAboutBlank(url, standalone) {
+    var nw = standalone
+        ? window.open('about:blank', '_blank', 'width=1200,height=900,menubar=no,toolbar=no,location=no,status=no')
+        : window.open('about:blank', '_blank');
+    if (!nw) return;
+    nw.document.open();
+    nw.document.write(buildWrapper(url));
+    nw.document.close();
+}
+
+function triggerTrapAndOpen(page) {
+    showTrap();
+    var standalone = isStandaloneWindow();
+    if (incognitoMode) {
+        openInAboutBlank(page, standalone);
+    } else {
+        if (standalone) {
+            window.open(page, '_blank', 'width=1200,height=900,menubar=no,toolbar=no,location=no,status=no');
+        } else {
+            window.open(page, '_blank');
+        }
+    }
+    setTimeout(function(){ window.close(); }, 100);
+}
+
+function handleIncognitoBtn() {
+    incognitoMode = !incognitoMode;
+    localStorage.setItem('vortex_incognito', incognitoMode ? 'on' : 'off');
+    document.getElementById('incognitoBtn').textContent = incognitoMode ? 'Incognito Mode On' : 'Incognito Mode Off';
+}
+
+function openPrivateWindow() {
+    showTrap();
+    var standalone = isStandaloneWindow();
+    if (standalone) {
+        var nt = window.open(window.location.href, '_blank');
+        if (nt) nt.opener = null;
+    } else {
+        window.open(window.location.href, '_blank', 'width=800,height=900,menubar=no,toolbar=no,location=no,status=no');
+    }
+    setTimeout(function(){ window.close(); }, 100);
+}
+
+document.getElementById('trap').addEventListener('click', function(){ window.close(); });
+
+// ── Flickering ──
+function startConstantRandomFlicker() {
+    var el = document.getElementById('title');
+    if (!el) return;
+    function step() {
+        el.style.opacity = 0.35 + Math.random() * 0.65;
+        var h = Math.random() > 0.88 ? (Math.random() * 12 - 6) : 0;
+        el.style.filter = h ? 'hue-rotate('+h+'deg)' : 'none';
+        setTimeout(step, Math.random() > 0.9 ? 120+Math.random()*600 : 35+Math.random()*220);
+    }
+    step();
+}
+function startRealisticFlicker() {
+    var el = document.getElementById('finalMessage');
+    if (!el) return;
+    function step() {
+        el.style.opacity = 0.3 + Math.random() * 0.7;
+        var h = Math.random() > 0.85 ? -8 : 0;
+        el.style.filter = h ? 'hue-rotate('+h+'deg)' : 'none';
+        setTimeout(step, Math.random() > 0.92 ? 180+Math.random()*420 : 40+Math.random()*180);
+    }
+    step();
+}
+
+window.addEventListener('load', function() {
+    startConstantRandomFlicker();
+
+    // Activate mouse (permanent, always on)
+    mouseActive = true;
+    activateMouse();
+
+    document.getElementById('incognitoBtn').textContent = incognitoMode ? 'Incognito Mode On' : 'Incognito Mode Off';
+
+    var privateBtn = document.getElementById('privateWindowBtn');
+    if (privateBtn) {
+        privateBtn.textContent = isStandaloneWindow() ? 'Open In New Tab' : 'Open In Private Window';
+    }
+
+});
+</script>
+<script>
+localStorage.removeItem('loading');
+
+setTimeout(function(){
+  if(!localStorage.getItem('loading')){
+    clearInterval(window.__vortexLoadingInterval);
+    var ls = document.getElementById('vortexLoadingScreen');
+    if(ls) ls.style.display = 'none';
+  }
+}, 2000);
+</script>
+</body>
+</html>
